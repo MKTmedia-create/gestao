@@ -28,6 +28,7 @@
   .cx summary{cursor:pointer;font-weight:600;color:var(--e-tinta);min-height:32px;display:flex;align-items:center;gap:6px}
   .cx ol{margin:10px 0 0;padding-left:20px}
   .cx li + li{margin-top:6px}
+  .cx details p{margin:12px 0 0;line-height:1.5}
 </style>
 </head>
 <body class="entrada">
@@ -49,6 +50,7 @@
       <li>Crie um token só para o repositório do sistema, com a permissão Contents em Read and write.</li>
       <li>Copie o token e cole aqui. Ele fica guardado só neste navegador.</li>
     </ol>
+    <p>Recebeu convite para o sistema? Aceite o convite do GitHub e crie a sua chave em Tokens (classic), marcando só “repo”. Cada pessoa usa a própria chave: tudo o que você gravar sai com o seu nome.</p>
   </details>
 </main>
 <script>
@@ -60,7 +62,7 @@
     poe: (v, lembrar) => { sessionStorage.setItem('gestao.chave', v); if (lembrar) localStorage.setItem('gestao.chave', v); },
     limpa: () => { sessionStorage.removeItem('gestao.chave'); localStorage.removeItem('gestao.chave'); }
   };
-  let chave = '';
+  let chave = '', quem = '';
   const caminho = (p) => API + p.split('/').map(encodeURIComponent).join('/');
   const chama = async (p, opt = {}, bruto = false) => {
     const r = await fetch(caminho(p) + (opt.method ? '' : `?ref=${CFG.ramo}`), {...opt, cache: 'no-store', headers: {Authorization: `Bearer ${chave}`, Accept: bruto ? 'application/vnd.github.raw+json' : 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28'}});
@@ -100,8 +102,8 @@
     collection: (p) => ({
       onSnapshot: (segue, erro) => { abre(ultimo(p)).then((a) => segue({docs: Object.entries(a.dados).map(([id, v]) => ({id, exists: true, data: () => v}))})).catch((e) => { if (erro) erro(e); }); return () => {}; },
       doc: (id) => ({
-        set: (v) => grava(ultimo(p), (d) => { d[id] = v; return d; }, `Gestão: ${ultimo(p)} de ${v.nome || id}`),
-        delete: () => grava(ultimo(p), (d) => { delete d[id]; return d; }, `Gestão: ${ultimo(p)}, limpa ${id}`)
+        set: (v) => grava(ultimo(p), (d) => { d[id] = quem ? {...v, por: quem} : v; return d; }, `Gestão${quem ? ' (' + quem + ')' : ''}: ${ultimo(p)} de ${v.nome || id}`),
+        delete: () => grava(ultimo(p), (d) => { delete d[id]; return d; }, `Gestão${quem ? ' (' + quem + ')' : ''}: ${ultimo(p)}, limpa ${id}`)
       })
     })
   };
@@ -113,17 +115,18 @@
       if (arq.size > 20 * 1024 * 1024) throw new Error('Arquivo acima de 20 MB');
       const bytes = new Uint8Array(await arq.arrayBuffer()), agora = new Date().toISOString();
       const nome = `${agora.slice(0, 10)}_${agora.slice(11, 19).split(':').join('')}_${limpaNome(arq.name)}`;
-      await chama(`${CFG.entrada}/${nome}`, {method: 'PUT', body: JSON.stringify({message: `Gestão: documento recebido (${arq.name})`, branch: CFG.ramo, content: para64(bytes)})});
+      await chama(`${CFG.entrada}/${nome}`, {method: 'PUT', body: JSON.stringify({message: `Gestão${quem ? ' (' + quem + ')' : ''}: documento recebido (${arq.name})`, branch: CFG.ramo, content: para64(bytes)})});
     }
   };
 
   // Busca o sistema no repositório privado e monta a página.
   const monta = async () => {
+    try { const r = await fetch('https://api.github.com/user', {cache: 'no-store', headers: {Authorization: `Bearer ${chave}`, Accept: 'application/vnd.github+json'}}); if (r.ok) quem = (await r.json()).login || ''; } catch (e) { quem = ''; }
     const doc = new DOMParser().parseFromString(await texto(`${CFG.app}/index.html`), 'text/html');
     const scripts = [...doc.querySelectorAll('script')];
     const fontes = await Promise.all(scripts.map((s) => (s.getAttribute('src') ? texto(`${CFG.app}/${s.getAttribute('src')}`) : s.textContent)));
     scripts.forEach((s) => s.remove());
-    window.claude = {use: async (n) => (n === 'db' ? db : n === 'arquivos' ? envio : null)};
+    window.claude = {quem, use: async (n) => (n === 'db' ? db : n === 'arquivos' ? envio : null)};
     document.title = 'Gestão — FTW Suplementos';
     doc.head.querySelectorAll('style').forEach((s) => document.head.append(document.importNode(s, true)));
     document.body.className = doc.body.className;
