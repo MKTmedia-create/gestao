@@ -6,32 +6,38 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Gestão — FTW Suplementos</title>
 <style>
-  body.entrada{margin:0;min-height:100vh;display:grid;place-items:center;background:#101012;color:#f2f2f4;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.5}
-  .cx{box-sizing:border-box;width:min(92vw,420px);background:#1a1a1e;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px}
-  .cx .marca{width:44px;height:44px;border-radius:11px;background:#DA291C;display:grid;place-items:center;margin-bottom:18px}
-  .cx h1{font-size:22px;line-height:1.25;margin:0 0 4px;font-weight:650}
-  .cx .sub{margin:0 0 22px;color:#a3a3ad;font-size:14px}
+  @font-face{font-family:"Inter";src:url("fonts/inter-latin-wght-normal.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+  :root{color-scheme:light;--e-tela:#F3F3F5;--e-folha:#FFFFFF;--e-suave:#F3F3F5;--e-tinta:#18181B;--e-apagado:#5F5F6A;--e-linha:#8A8A96;--e-primario:#1C1113;--e-primario-texto:#FFFFFF;--e-marca:#DA291C;--e-erro:#B42318}
+  :root[data-tema="escuro"]{color-scheme:dark;--e-tela:#0E0E10;--e-folha:#161619;--e-suave:#232328;--e-tinta:#F4F4F5;--e-apagado:#A8A8B3;--e-linha:#7A7A86;--e-primario:#F4F4F5;--e-primario-texto:#18181B;--e-marca:#E5392C;--e-erro:#FF8A7E}
+  body.entrada{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;box-sizing:border-box;background:var(--e-tela);color:var(--e-tinta);font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .cx{box-sizing:border-box;width:min(100%,432px);background:var(--e-folha);border-radius:24px;padding:clamp(24px,5vw,36px)}
+  .cx .marca{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+  .cx .marca i{flex:none;width:44px;height:44px;border-radius:50%;background:var(--e-marca);display:grid;place-items:center}
+  .cx .marca b{display:block;font-size:15px;font-weight:700;line-height:1.25}
+  .cx .marca small{display:block;font-size:13px;color:var(--e-apagado)}
+  .cx h1{font-size:26px;line-height:1.2;margin:0 0 20px;font-weight:700;letter-spacing:-.015em}
   .cx label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
-  .cx input[type=password]{box-sizing:border-box;width:100%;min-height:46px;padding:0 14px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:#101012;color:inherit;font:inherit}
-  .cx input[type=password]:focus-visible,.cx button:focus-visible,.cx summary:focus-visible{outline:2px solid #DA291C;outline-offset:2px}
-  .cx .ck{display:flex;align-items:center;gap:8px;font-weight:400;color:#c9c9d1;margin:14px 0 18px;min-height:28px}
-  .cx button{width:100%;min-height:46px;border:0;border-radius:10px;background:#DA291C;color:#fff;font:inherit;font-weight:600;cursor:pointer}
-  .cx button:disabled{opacity:.6;cursor:default}
-  .cx #msg{margin:14px 0 0;color:#ff8a80;font-size:14px}
-  .cx details{margin-top:20px;font-size:14px;color:#c9c9d1}
-  .cx summary{cursor:pointer;font-weight:600;color:#f2f2f4}
+  .cx input[type=password]{box-sizing:border-box;width:100%;min-height:48px;padding:0 14px;border-radius:12px;border:1px solid var(--e-linha);background:var(--e-folha);color:inherit;font:inherit}
+  .cx input[type=password]:focus-visible,.cx button:focus-visible,.cx summary:focus-visible,.cx input[type=checkbox]:focus-visible{outline:2px solid var(--e-tinta);outline-offset:2px}
+  .cx .ck{display:flex;align-items:center;gap:10px;font-weight:400;margin:14px 0 20px;min-height:44px}
+  .cx .ck input{width:18px;height:18px;accent-color:var(--e-primario)}
+  .cx button{width:100%;min-height:48px;border:0;border-radius:12px;background:var(--e-primario);color:var(--e-primario-texto);font:inherit;font-weight:600;cursor:pointer}
+  .cx button:disabled{cursor:default;opacity:.7}
+  .cx #msg{margin:14px 0 0;color:var(--e-erro);font-size:14px;font-weight:500}
+  .cx details{margin-top:22px;font-size:14px;color:var(--e-apagado)}
+  .cx summary{cursor:pointer;font-weight:600;color:var(--e-tinta);min-height:32px;display:flex;align-items:center;gap:6px}
   .cx ol{margin:10px 0 0;padding-left:20px}
-  #sair{position:fixed;right:14px;bottom:14px;z-index:50;min-height:36px;padding:0 14px;border-radius:999px;border:1px solid rgba(128,128,128,.4);background:rgba(20,20,24,.85);color:#f2f2f4;font:500 13px ui-sans-serif,system-ui,sans-serif;cursor:pointer}
+  .cx li + li{margin-top:6px}
 </style>
 </head>
 <body class="entrada">
+<script>try { document.documentElement.dataset.tema = localStorage.getItem('gestao.tema') || 'claro'; } catch (e) { document.documentElement.dataset.tema = 'claro'; }</script>
 <main class="cx" id="entrada">
-  <div class="marca" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-7"/></svg></div>
-  <h1>Gestão estratégica e orçamentária</h1>
-  <p class="sub">FTW Suplementos. Acesso restrito.</p>
-  <form id="form">
+  <div class="marca"><i aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-7"/></svg></i><span><b>Gestão de marca</b><small>FTW Suplementos</small></span></div>
+  <h1>Entrar</h1>
+  <form id="form" novalidate>
     <label for="chave">Chave de acesso</label>
-    <input id="chave" type="password" autocomplete="current-password" required>
+    <input id="chave" type="password" autocomplete="current-password" required aria-describedby="msg">
     <label class="ck"><input type="checkbox" id="lembrar" checked> Manter conectado neste aparelho</label>
     <button type="submit" id="entrar">Entrar</button>
     <p id="msg" role="alert" hidden></p>
@@ -47,7 +53,7 @@
 </main>
 <script>
 (() => {
-  const CFG = {dono: 'MKTmedia-create', repo: 'ftw-artefatos', ramo: 'main', app: 'artefatos/painel-investimento-marca', dados: 'gestao/dados', entrada: 'gestao/entrada'};
+  const CFG = {dono: 'MKTmedia-create', repo: 'ftw-artefatos', ramo: 'main', app: 'gestao/app', dados: 'gestao/dados', entrada: 'gestao/entrada'};
   const API = `https://api.github.com/repos/${CFG.dono}/${CFG.repo}/contents/`;
   const guarda = {
     le: () => sessionStorage.getItem('gestao.chave') || localStorage.getItem('gestao.chave') || '',
@@ -119,18 +125,17 @@
     scripts.forEach((s) => s.remove());
     window.claude = {use: async (n) => (n === 'db' ? db : n === 'arquivos' ? envio : null)};
     document.title = 'Gestão — FTW Suplementos';
-    document.head.querySelectorAll('style').forEach((s) => s.classList.add('da-entrada'));
     doc.head.querySelectorAll('style').forEach((s) => document.head.append(document.importNode(s, true)));
     document.body.className = doc.body.className;
     document.body.replaceChildren(...[...doc.body.childNodes].map((n) => document.importNode(n, true)));
     fontes.forEach((codigo) => { const s = document.createElement('script'); s.textContent = codigo; document.body.append(s); });
-    const sair = document.createElement('button'); sair.id = 'sair'; sair.type = 'button'; sair.textContent = 'Sair';
+    const sair = document.createElement('button'), pe = document.querySelector('.pd-nav-pe'); sair.id = 'sair'; sair.type = 'button'; sair.textContent = 'Sair';
     sair.addEventListener('click', () => { guarda.limpa(); location.reload(); });
-    document.body.append(sair);
+    if (pe) pe.append(sair); else { sair.className = 'solto'; document.body.append(sair); }
   };
 
   const form = document.getElementById('form'), campo = document.getElementById('chave'), botao = document.getElementById('entrar'), msg = document.getElementById('msg');
-  const avisa = (t) => { msg.textContent = t; msg.hidden = !t; };
+  const avisa = (t) => { msg.textContent = t; msg.hidden = !t; campo.setAttribute('aria-invalid', String(!!t)); if (t) campo.focus(); };
   const tenta = async (valor, lembrar) => {
     chave = valor.trim(); botao.disabled = true; botao.textContent = 'Entrando…'; avisa('');
     try { await monta(); guarda.poe(chave, lembrar); }
@@ -140,7 +145,7 @@
       avisa(e.status === 401 ? 'Chave inválida ou vencida. Confira e tente de novo.' : e.status === 403 || e.status === 404 ? 'Essa chave não tem acesso ao sistema.' : 'Não foi possível conectar. Confira a internet e tente de novo.');
     }
   };
-  form.addEventListener('submit', (ev) => { ev.preventDefault(); if (campo.value.trim()) tenta(campo.value, document.getElementById('lembrar').checked); });
+  form.addEventListener('submit', (ev) => { ev.preventDefault(); if (campo.value.trim()) tenta(campo.value, document.getElementById('lembrar').checked); else avisa('Cole a chave de acesso para entrar.'); });
   const salva = guarda.le();
   if (salva) tenta(salva, !!localStorage.getItem('gestao.chave'));
 })();
